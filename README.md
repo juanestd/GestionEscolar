@@ -5,6 +5,6 @@ Uso de Django, APIS, FRONT-END, BACK-END, Gestión de datos, Bases de datos, ent
 
 Trabajo elaborado por:
 
-  * Juan Esteban Duque
+  * Juan Esteban Tobón Duque
   * Stiven Alexander Parra Hincapie
   * Andres Felipe Rendon Alvarez
