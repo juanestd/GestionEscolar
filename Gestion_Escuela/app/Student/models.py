@@ -1,8 +1,7 @@
 from django.db import models
-from app.Users.models import CustomUser  
+from app.Users.models import User  
 
 class Student(models.Model):
-
     GRADE_CHOICES = [
         ('1', 'Grado Primero'),
         ('2', 'Grado Segundo'),
@@ -15,14 +14,10 @@ class Student(models.Model):
         ('9', 'Grado Noveno'),
         ('10', 'Grado Décimo'),
         ('11', 'Grado Once'),
-        
     ]
 
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='student_profile')
-    grade = models.CharField(max_length=2, choices=GRADE_CHOICES, default='1')
-    enrollment_date = models.DateField(auto_now_add=True)  # Fecha de inscripción automática al registro
-    address = models.CharField(max_length=255, default="No address", blank = True, null = True)
-    phone_number = models.CharField(max_length=20)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    grade = models.CharField(max_length=2, choices=GRADE_CHOICES)
 
     def __str__(self):
         return f"{self.user.full_name} - Grado {self.get_grade_display()}"

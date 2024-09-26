@@ -1,24 +1,15 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-class CustomUser(AbstractUser):
+class User(models.Model):
     full_name = models.CharField(max_length=255)
+    email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=20)
     birth_date = models.DateField()
     address = models.TextField()
-    role = models.CharField(max_length=50, choices=[('Student', 'Student'), ('Teacher', 'Teacher'), ('Admin', 'Admin')])
-
-    # Agregamos related_name para evitar conflictos
-    groups = models.ManyToManyField(
-        'auth.Group',
-        related_name='customuser_groups',  # related_name personalizado para evitar conflicto con auth.User
-        blank=True,
-    )
-    user_permissions = models.ManyToManyField(
-        'auth.Permission',
-        related_name='customuser_permissions',  # related_name personalizado para evitar conflicto con auth.User
-        blank=True,
-    )
+    role = models.CharField(max_length=50)  # Ej: Estudiante, Profesor, Administrativo
+    username = models.CharField(max_length=150, unique=True)
+    password = models.CharField(max_length=128)
 
     def __str__(self):
-        return self.username
+        return self.full_name
