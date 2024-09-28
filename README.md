@@ -8,3 +8,7 @@ Trabajo elaborado por:
   * Juan Esteban Tobón Duque
   * Stiven Alexander Parra Hincapie
   * Andres Felipe Rendon Alvarez
+
+* Iniciar el proyecto: pip install -r requirements.txt
+* Activar el entorno:  ent\Scripts\activate.bat      
+* Correr el servidor: python manage.py runserver     
