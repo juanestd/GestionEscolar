@@ -1,0 +1,24 @@
+# Entornos virtuales
+.venv/
+ent/
+
+# Archivos compilados de Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+
+
+
+# Archivos de configuración de IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Dependencias locales
+Pipfile
+Pipfile.lock
