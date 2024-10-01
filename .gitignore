@@ -7,11 +7,14 @@ __pycache__/
 *.py[cod]
 *.pyo
 
+# Archivos de caché y de base de datos de Django
+*.log
+*.sqlite3
+*.db
+
 # Archivos del sistema operativo
 .DS_Store
 Thumbs.db
-
-
 
 # Archivos de configuración de IDE
 .vscode/
@@ -22,3 +25,11 @@ Thumbs.db
 # Dependencias locales
 Pipfile
 Pipfile.lock
+
+# Migraciones de Django (opcional, si no deseas incluirlas en el control de versiones)
+# gestion_escuela/migrations/
+# ¡Descomenta la línea de arriba si no deseas rastrear las migraciones!
+
+# Otros archivos temporales
+*.pot
+*.pyc
