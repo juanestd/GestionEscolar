@@ -17,5 +17,7 @@ Trabajo elaborado por:
  #Luego se instalan los requirements: pip install -r requirements.txt
  #Por último correr el servidor: python manage.py runserver
 
+#npm install
+#npm run dev
 
 
