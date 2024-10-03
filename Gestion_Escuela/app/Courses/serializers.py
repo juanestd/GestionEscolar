@@ -1,14 +1,12 @@
+
 from rest_framework import serializers
 from app.Courses.models import Course
-from app.Student.models import Student
-
-class StudentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Student
-        fields = '__all__'# Ajusta según los campos que desees incluir
+from app.Teachers.serializers import TeacherSerializer
+from app.Student.serializers import StudentSerializer
 
 class CoursesSerializer(serializers.ModelSerializer):
-    students = StudentSerializer(many=True, read_only=True)# Incluir estudiantes registrados en el curso
+    teacher = TeacherSerializer()  # Serializador para el profesor
+    students = StudentSerializer(many=True, source='info_students')  # Incluir estudiantes registrados en el curso
 
     class Meta:
         model = Course

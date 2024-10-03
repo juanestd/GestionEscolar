@@ -3,27 +3,36 @@ import axios from 'axios';
 
 const CourseList = () => {
     const [courses, setCourses] = useState([]);
+    const [teachers, setTeachers] = useState([]); // Estado para los docentes
+    const [students, setStudents] = useState([]); // Estado para los estudiantes
     const [error, setError] = useState(null);
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [newCourse, setNewCourse] = useState({ name: '', description: '', schedule: '', teacher: '' });
     const [isEditing, setIsEditing] = useState(false);
-    const [showAddForm, setShowAddForm] = useState(false); // Controla la visibilidad del formulario de agregar
+    const [showAddForm, setShowAddForm] = useState(false); 
+    const [selectedStudent] = useState(''); 
 
-    // Fetch courses from the API
+    
     useEffect(() => {
-        const fetchCourses = async () => {
+        const fetchCoursesAndTeachers = async () => {
             try {
-                const response = await axios.get('http://127.0.0.1:8000/course/course/v1/course/');
-                setCourses(response.data);
+                const courseResponse = await axios.get('http://127.0.0.1:8000/course/course/v1/course/');
+                setCourses(courseResponse.data);
+
+                const teacherResponse = await axios.get('http://127.0.0.1:8000/course/teacher/v1/'); 
+                setTeachers(teacherResponse.data);
+
+                const studentResponse = await axios.get('http://127.0.0.1:8000/course/student/v1/'); 
+                setStudents(studentResponse.data);
             } catch (err) {
-                setError('Error fetching courses: ' + (err.response ? err.response.data : err.message));
+                setError('Error fetching data: ' + (err.response ? err.response.data : err.message));
             }
         };
 
-        fetchCourses();
+        fetchCoursesAndTeachers();
     }, []);
 
-    // Select a course to update
+    
     const handleCourseSelect = (course) => {
         setSelectedCourse(course);
         setIsEditing(true);
@@ -33,10 +42,10 @@ const CourseList = () => {
             schedule: course.schedule || '',
             teacher: course.teacher || ''
         });
-        setShowAddForm(false); // Ocultar formulario de agregar si se selecciona un curso
+        setShowAddForm(false); 
     };
 
-    // Handle input change
+    
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setNewCourse({ ...newCourse, [name]: value });
@@ -54,7 +63,7 @@ const CourseList = () => {
             });
             setCourses([...courses, response.data]);
             setNewCourse({ name: '', description: '', schedule: '', teacher: '' });
-            setShowAddForm(false); // Ocultar formulario tras agregar el curso
+            setShowAddForm(false); 
         } catch (err) {
             setError('Error adding course: ' + (err.response?.data ? JSON.stringify(err.response.data) : err.message));
         }
@@ -68,8 +77,9 @@ const CourseList = () => {
                 name: newCourse.name,
                 description: newCourse.description,
                 schedule: newCourse.schedule,
+                teacher: newCourse.teacher
             });
-            pdatedCourses = courses.map((course) =>
+            const updatedCourses = courses.map((course) =>
                 course.id === selectedCourse.id ? { ...course, ...newCourse } : course
             );
             setCourses(updatedCourses);
@@ -84,7 +94,7 @@ const CourseList = () => {
     // Delete a course
     const handleDeleteCourse = async (courseId) => {
         try {
-            await axios.delete('http://127.0.0.1:8000/course/course/v1/course/${courseId}/');
+            await axios.delete(`http://127.0.0.1:8000/course/course/v1/course/${courseId}/`);
             const updatedCourses = courses.filter((course) => course.id !== courseId);
             setCourses(updatedCourses);
         } catch (err) {
@@ -97,7 +107,7 @@ const CourseList = () => {
             {error && <p className="text-danger">{error}</p>}
 
             <div className="row">
-                {/* List of courses */}
+                {}
                 <div className="col-md-4">
                     <h2>Cursos Disponibles</h2>
                     <ul className="list-group">
@@ -118,24 +128,24 @@ const CourseList = () => {
                     </ul>
                 </div>
 
-                {/* Form to update or add a course */}
+                {}
                 <div className="col-md-8">
                     <h2>Gestión de Cursos</h2>
 
-                    {/* Botón para agregar un nuevo curso */}
+                    {}
                     <button
                         className="btn btn-success mb-3"
                         style={{ float: 'right' }}
                         onClick={() => {
                             setShowAddForm(!showAddForm);
-                            setIsEditing(false); // Desactivar edición si estaba seleccionada
-                            setNewCourse({ name: '', description: '', schedule: '', teacher: '' }); // Limpiar formulario
+                            setIsEditing(false); 
+                            setNewCourse({ name: '', description: '', schedule: '', teacher: '' }); 
                         }}
                     >
                         {showAddForm ? 'Ocultar Formulario' : 'Agregar Nuevo Curso'}
                     </button>
 
-                    {/* Mostrar el formulario solo si showAddForm es true */}
+                    {}
                     {showAddForm && (
                         <form onSubmit={handleAddCourse}>
                             <div className="form-group">
@@ -171,13 +181,20 @@ const CourseList = () => {
                             </div>
                             <div className="form-group">
                                 <label>Profesor</label>
-                                <input
-                                    type="text"
+                                <select
                                     className="form-control"
                                     name="teacher"
                                     value={newCourse.teacher}
-                                    onChange={handleInputChange}
-                                />
+                                    onChange={(e) => setNewCourse({ ...newCourse, teacher: e.target.value })}
+                                    required
+                                >
+                                    <option value="">Selecciona un profesor</option>
+                                    {teachers.map((teacher) => (
+                                        <option key={teacher.id} value={teacher.name}>
+                                            {teacher.name}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
                             <button type="submit" className="btn btn-success mt-2">
                                 Agregar Curso
@@ -185,7 +202,12 @@ const CourseList = () => {
                         </form>
                     )}
 
-                    {/* Formulario para actualizar o eliminar curso */}
+                    {}
+                    <div className="mt-3">
+                        <h4>Estudiante Seleccionado: {selectedStudent}</h4>
+                    </div>
+
+                    {}
                     {isEditing && (
                         <form onSubmit={handleUpdateCourse}>
                             <div className="form-group">
@@ -221,20 +243,27 @@ const CourseList = () => {
                             </div>
                             <div className="form-group">
                                 <label>Profesor</label>
-                                <input
-                                    type="text"
+                                <select
                                     className="form-control"
                                     name="teacher"
                                     value={newCourse.teacher}
-                                    onChange={handleInputChange}
-                                />
+                                    onChange={(e) => setNewCourse({ ...newCourse, teacher: e.target.value })}
+                                    required
+                                >
+                                    <option value="">Selecciona un profesor</option>
+                                    {teachers.map((teacher) => (
+                                        <option key={teacher.id} value={teacher.name}>
+                                            {teacher.name}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
-                            <button type="submit" className="btn btn-primary mt-2 me-2">
+                            <button type="submit" className="btn btn-primary mt-2">
                                 Actualizar Curso
                             </button>
                             <button
                                 type="button"
-                                className="btn btn-danger mt-2"
+                                className="btn btn-danger mt-2 ms-2"
                                 onClick={() => handleDeleteCourse(selectedCourse.id)}
                             >
                                 Eliminar Curso

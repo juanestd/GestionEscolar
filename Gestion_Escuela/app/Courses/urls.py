@@ -1,11 +1,10 @@
 from django.urls import path, include
-from rest_framework import routers 
-from rest_framework.documentation import include_docs_urls
-from app.Courses import views
+from rest_framework.routers import DefaultRouter
+from .views import CourseView
 
-router = routers.DefaultRouter()
-router.register(r'course',views.CourseView,'course')
+router = DefaultRouter()
+router.register(r'courses', CourseView, basename='course')
 
 urlpatterns = [
-    path ("course/v1/",include(router.urls)),
+    path('v1/', include(router.urls)),  # Incluye las rutas para la API de cursos
 ]

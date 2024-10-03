@@ -1,8 +1,8 @@
-from django.shortcuts import render
+# app/Courses/views.py
 from rest_framework import viewsets
-from .serializers import CoursesSerializer
 from .models import Course
+from .serializers import CoursesSerializer
 
-class CourseView (viewsets.ModelViewSet):
-    serializer_class = CoursesSerializer
+class CourseView(viewsets.ModelViewSet):
     queryset = Course.objects.all()
+    serializer_class = CoursesSerializer
