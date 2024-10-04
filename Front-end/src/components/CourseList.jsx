@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import jsPDF from 'jspdf';
 
 const CourseList = () => {
     const [courses, setCourses] = useState([]);
@@ -7,6 +8,8 @@ const CourseList = () => {
     const [students, setStudents] = useState([]);
     const [enrolledStudents, setEnrolledStudents] = useState([]);
     const [error, setError] = useState(null);
+    const [reportType, setReportType] = useState('all'); 
+
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [newCourse, setNewCourse] = useState({ 
         nombre_del_curso: '', 
@@ -17,8 +20,8 @@ const CourseList = () => {
     });
     const [isEditing, setIsEditing] = useState(false);
     const [showAddForm, setShowAddForm] = useState(false);
-    const [activeTab, setActiveTab] = useState('view'); 
 
+    const [activeTab, setActiveTab] = useState('view'); 
     useEffect(() => {
         const fetchCoursesAndTeachers = async () => {
             try {
@@ -46,22 +49,28 @@ const CourseList = () => {
             descripcion: course.descripcion || '',
             horario: course.horario || '',
             profesor: course.profesor || '', 
-            estudiantes: [] 
+            estudiantes: [] // Este valor se actualizará más adelante
         });
         setShowAddForm(false);
-
-        
+    
+        // Cargar estudiantes matriculados para el curso seleccionado
         try {
             const response = await axios.get(`http://127.0.0.1:8000/courses/${course.id}/students/`);
-            const studentIds = response.data.estudiantes;
+            const studentIds = response.data.estudiantes; // IDs de estudiantes matriculados
             const studentDetailsPromises = studentIds.map(id => axios.get(`http://127.0.0.1:8000/students/${id}`));
             const studentDetailsResponses = await Promise.all(studentDetailsPromises);
             const enrolledStudents = studentDetailsResponses.map(res => res.data);
+    
             setEnrolledStudents(enrolledStudents);
+            setNewCourse(prevCourse => ({
+                ...prevCourse,
+                estudiantes: studentIds // Establece los estudiantes matriculados en el nuevo curso
+            }));
         } catch (err) {
             setError('Error fetching enrolled students: ' + (err.response ? err.response.data : err.message));
         }
     };
+    
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -130,16 +139,107 @@ const CourseList = () => {
         }
     };
 
+    // Generar y descargar reporte en PDF solo para el curso seleccionado
+    const generatePDFReport = () => {
+        const doc = new jsPDF();
+        
+        doc.setFontSize(18);
+        doc.text("Reporte de Horarios y Asignaciones de Cursos", 20, 20);
+        
+        let yPosition = 40; 
+    
+        if (reportType === 'all') {
+            // Generar reporte de todos los cursos
+            courses.forEach((course, index) => {
+                doc.setFontSize(14);
+                doc.text(`${index + 1}. ${course.nombre_del_curso}`, 20, yPosition);
+                yPosition += 10; 
+                doc.setFontSize(12);
+                doc.text(`Descripción: ${course.descripcion}`, 20, yPosition);
+                yPosition += 10; 
+                doc.text(`Horario: ${course.horario}`, 20, yPosition);
+                yPosition += 10; 
+                const teacherName = teachers.find(t => t.id === course.profesor)?.nombre_completo || "Desconocido";
+                doc.text(`Profesor: ${teacherName}`, 20, yPosition);
+                yPosition += 20; 
+            });
+        } else if (reportType === 'selected' && selectedCourse) {
+            // Generar reporte del curso seleccionado
+            doc.setFontSize(14);
+            doc.text(`1. ${selectedCourse.nombre_del_curso}`, 20, yPosition);
+            yPosition += 10; 
+            doc.setFontSize(12);
+            doc.text(`Descripción: ${selectedCourse.descripcion}`, 20, yPosition);
+            yPosition += 10;
+            doc.text(`Horario: ${selectedCourse.horario}`, 20, yPosition);
+            yPosition += 10; 
+            const teacherName = teachers.find(t => t.id === selectedCourse.profesor)?.nombre_completo || "Desconocido";
+            doc.text(`Profesor: ${teacherName}`, 20, yPosition);
+            yPosition += 10; 
+    
+            if (enrolledStudents.length > 0) {
+                doc.text(`Estudiantes Matriculados:`, 20, yPosition);
+                yPosition += 10; 
+                enrolledStudents.forEach((student, index) => {
+                    doc.text(`${index + 1}. ${student.nombre_completo}`, 20, yPosition);
+                    yPosition += 10; 
+                });
+            } else {
+                doc.text(`No hay estudiantes matriculados.`, 20, yPosition);
+            }
+        }
+    
+        doc.save('reporte_cursos.pdf');
+    };
+    
+
+    
+    
+    <button className="btn btn-success" onClick={generatePDFReport} disabled={!selectedCourse}>Generar Reporte PDF</button>
+
     return (
         <div className="container mt-5">
             {error && <p className="text-danger">{error}</p>}
             
             <div className="mb-3">
                 <button className={`btn ${activeTab === 'view' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setActiveTab('view')}>Ver Cursos</button>
-                <button className={`btn ${activeTab === 'add' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setActiveTab('add')}>Agregar Curso</button>
+                <button className={`btn ${activeTab === 'add' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => {
+                    setActiveTab('add'); 
+                    setNewCourse({ nombre_del_curso: '', descripcion: '', horario: '', profesor: '', estudiantes: [] }); // Limpia el formulario
+                }}>Agregar Curso</button>
                 <button className={`btn ${activeTab === 'update' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setActiveTab('update')}>Actualizar Cursos</button>
+    
+                <button className="btn btn-success" onClick={generatePDFReport}>Generar Reporte PDF</button>
             </div>
-
+    
+            <div className="mb-3">
+                <label className="mr-2">Generar reporte de:</label>
+                <div className="form-check form-check-inline">
+                    <input
+                        className="form-check-input"
+                        type="radio"
+                        name="reportType"
+                        id="allCourses"
+                        value="all"
+                        checked={reportType === 'all'}
+                        onChange={() => setReportType('all')}
+                    />
+                    <label className="form-check-label" htmlFor="allCourses">Todos los Cursos</label>
+                </div>
+                <div className="form-check form-check-inline">
+                    <input
+                        className="form-check-input"
+                        type="radio"
+                        name="reportType"
+                        id="selectedCourse"
+                        value="selected"
+                        checked={reportType === 'selected'}
+                        onChange={() => setReportType('selected')}
+                    />
+                    <label className="form-check-label" htmlFor="selectedCourse">Curso Seleccionado</label>
+                </div>
+            </div>
+    
             {activeTab === 'view' && (
                 <div className="row">
                     <div className="col-md-4">
@@ -161,7 +261,7 @@ const CourseList = () => {
                             )}
                         </ul>
                     </div>
-
+    
                     <div className="col-md-8">
                         {selectedCourse && (
                             <div className="mt-3">
@@ -175,178 +275,160 @@ const CourseList = () => {
                                         <li key={student.id}>{student.nombre_completo}</li>
                                     ))}
                                 </ul>
-                                <button className="btn btn-danger mt-2" onClick={() => handleDeleteCourse(selectedCourse.id)}>
-                                    Eliminar Curso
-                                </button>
+                                <button className="btn btn-danger mt-2" onClick={() => handleDeleteCourse(selectedCourse.id)}>Eliminar Curso</button>
                             </div>
                         )}
                     </div>
                 </div>
             )}
-
+    
             {activeTab === 'add' && (
                 <div className="row">
-                    <div className="col-md-8">
-                        <h2>Gestión de Cursos</h2>
-                        <button
-                            className="btn btn-success mb-3"
-                            style={{ float: 'right' }}
-                            onClick={() => {
-                                setShowAddForm(!showAddForm);
-                                setIsEditing(false);
-                                setNewCourse({ nombre_del_curso: '', descripcion: '', horario: '', profesor: '', estudiantes: [] });
-                            }}
-                        >
-                            {showAddForm ? 'Ocultar Formulario' : 'Agregar Nuevo Curso'}
-                        </button>
-
-                        {showAddForm && (
-                            <form onSubmit={handleAddCourse}>
-                                <div className="form-group">
-                                    <label>Nombre del Curso</label>
-                                    <input
-                                        type="text"
-                                        name="nombre_del_curso"
-                                        value={newCourse.nombre_del_curso}
-                                        onChange={handleInputChange}
-                                        className="form-control"
-                                        required
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label>Descripción</label>
-                                    <textarea
-                                        name="descripcion"
-                                        value={newCourse.descripcion}
-                                        onChange={handleInputChange}
-                                        className="form-control"
-                                        required
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label>Horario</label>
-                                    <input
-                                        type="text"
-                                        name="horario"
-                                        value={newCourse.horario}
-                                        onChange={handleInputChange}
-                                        className="form-control"
-                                        required
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label>Profesor</label>
-                                    <select
-                                        name="profesor"
-                                        value={newCourse.profesor}
-                                        onChange={handleInputChange}
-                                        className="form-control"
-                                        required
-                                    >
-                                        <option value="">Seleccione un profesor</option>
-                                        {teachers.map((teacher) => (
-                                            <option key={teacher.id} value={teacher.id}>{teacher.nombre_completo}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div className="form-group">
-                                    <label>Estudiantes</label>
-                                    <ul className="list-group">
-                                        {students.map((student) => (
-                                            <li key={student.id} className="list-group-item">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={newCourse.estudiantes.includes(student.id)}
-                                                    onChange={() => handleStudentSelection(student.id)}
-                                                />
-                                                {student.nombre_completo}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                                <button type="submit" className="btn btn-primary">Agregar Curso</button>
-                            </form>
-                        )}
+                    <div className="col-md-6">
+                        <h2>Agregar Nuevo Curso</h2>
+                        <form onSubmit={handleAddCourse}>
+                            <div className="form-group">
+                                <label>Nombre del Curso:</label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    name="nombre_del_curso"
+                                    value={newCourse.nombre_del_curso}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Descripción:</label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    name="descripcion"
+                                    value={newCourse.descripcion}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Horario:</label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    name="horario"
+                                    value={newCourse.horario}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Profesor:</label>
+                                <select
+                                    className="form-control"
+                                    name="profesor"
+                                    value={newCourse.profesor}
+                                    onChange={handleInputChange}
+                                    required
+                                >
+                                    <option value="">Seleccionar Profesor</option>
+                                    {teachers.map((teacher) => (
+                                        <option key={teacher.id} value={teacher.id}>
+                                            {teacher.nombre_completo}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label>Estudiantes:</label>
+                                {students.map((student) => (
+                                    <div key={student.id} className="form-check">
+                                        <input
+                                            type="checkbox"
+                                            className="form-check-input"
+                                            id={`student-${student.id}`}
+                                            checked={newCourse.estudiantes.includes(student.id)}
+                                            onChange={() => handleStudentSelection(student.id)}
+                                        />
+                                        <label className="form-check-label" htmlFor={`student-${student.id}`}>
+                                            {student.nombre_completo}
+                                        </label>
+                                    </div>
+                                ))}
+                            </div>
+                            <button type="submit" className="btn btn-primary mt-3">Agregar Curso</button>
+                        </form>
                     </div>
                 </div>
             )}
-
-            {activeTab === 'update' && (
-                <div className="row">
-                    <div className="col-md-8">
-                        <h2>Actualizar Cursos</h2>
-                        {isEditing && (
-                            <form onSubmit={handleUpdateCourse}>
-                                <div className="form-group">
-                                    <label>Nombre del Curso</label>
-                                    <input
-                                        type="text"
-                                        name="nombre_del_curso"
-                                        value={newCourse.nombre_del_curso}
-                                        onChange={handleInputChange}
-                                        className="form-control"
-                                        required
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label>Descripción</label>
-                                    <textarea
-                                        name="descripcion"
-                                        value={newCourse.descripcion}
-                                        onChange={handleInputChange}
-                                        className="form-control"
-                                        required
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label>Horario</label>
-                                    <input
-                                        type="text"
-                                        name="horario"
-                                        value={newCourse.horario}
-                                        onChange={handleInputChange}
-                                        className="form-control"
-                                        required
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label>Profesor</label>
-                                    <select
-                                        name="profesor"
-                                        value={newCourse.profesor}
-                                        onChange={handleInputChange}
-                                        className="form-control"
-                                        required
-                                    >
-                                        <option value="">Seleccione un profesor</option>
-                                        {teachers.map((teacher) => (
-                                            <option key={teacher.id} value={teacher.id}>{teacher.nombre_completo}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div className="form-group">
-                                    <label>Estudiantes</label>
-                                    <ul className="list-group">
-                                        {students.map((student) => (
-                                            <li key={student.id} className="list-group-item">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={newCourse.estudiantes.includes(student.id)}
-                                                    onChange={() => handleStudentSelection(student.id)}
-                                                />
-                                                {student.nombre_completo}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                                <button type="submit" className="btn btn-primary">Actualizar Curso</button>
-                            </form>
-                        )}
-                    </div>
+    
+    {activeTab === 'update' && isEditing && (
+    <div className="row">
+        <div className="col-md-6">
+            <h2>Actualizar Curso</h2>
+            <form onSubmit={handleUpdateCourse}>
+                <div className="form-group">
+                    <label>Nombre del Curso:</label>
+                    <input
+                        type="text"
+                        name="nombre_del_curso"
+                        className="form-control"
+                        value={newCourse.nombre_del_curso}
+                        onChange={handleInputChange}
+                    />
                 </div>
-            )}
+                <div className="form-group">
+                    <label>Descripción:</label>
+                    <textarea
+                        name="descripcion"
+                        className="form-control"
+                        value={newCourse.descripcion}
+                        onChange={handleInputChange}
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Horario:</label>
+                    <input
+                        type="text"
+                        name="horario"
+                        className="form-control"
+                        value={newCourse.horario}
+                        onChange={handleInputChange}
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Profesor:</label>
+                    <select
+                        name="profesor"
+                        className="form-control"
+                        value={newCourse.profesor}
+                        onChange={handleInputChange}
+                    >
+                        {teachers.map(teacher => (
+                            <option key={teacher.id} value={teacher.id}>
+                                {teacher.nombre_completo}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                <h4>Seleccionar Estudiantes:</h4>
+                {students.map(student => (
+                    <div key={student.id}>
+                        <input
+                            type="checkbox"
+                            checked={newCourse.estudiantes.includes(student.id)}
+                            onChange={() => handleStudentSelection(student.id)}
+                        />
+                        {student.nombre_completo}
+                    </div>
+                ))}
+                <button type="submit" className="btn btn-primary">Actualizar Curso</button>
+            </form>
+        </div>
+    </div>
+)}
+
         </div>
     );
-};
-
-export default CourseList;
+    }
+    
+    export default CourseList;
+    

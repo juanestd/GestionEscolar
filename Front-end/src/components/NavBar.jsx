@@ -24,6 +24,9 @@ const NavBar = () => {
                         <li className={`nav-item ${location.pathname === '/login' ? 'active' : ''}`}>
                             <Link className="nav-link" to="/login">Login</Link>
                         </li>
+                        <li className={`nav-item ${location.pathname === '/agregar-estudiante' ? 'active' : ''}`}>
+                        <Link className="nav-link" to="/agregar-estudiante">Agregar Estudiante</Link>
+                        </li>
                         {user && (
                             <li className="nav-item">
                                 <Link className="nav-link" to="/" onClick={logout}>Logout</Link>

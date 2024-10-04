@@ -14,7 +14,7 @@ const Login = () => {
         try {
             const response = await axios.post('http://127.0.0.1:8000/api/login', { email, password });
             login(response.data.user); 
-            localStorage.setItem('token', response.data.token); /
+            localStorage.setItem('token', response.data.token); 
            
         } catch (err) {
             setError('Error de inicio de sesión: ' + err.response.data.message);
