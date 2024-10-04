@@ -5,6 +5,7 @@ const CourseList = () => {
     const [courses, setCourses] = useState([]);
     const [teachers, setTeachers] = useState([]); 
     const [students, setStudents] = useState([]); 
+    const [enrolledStudents, setEnrolledStudents] = useState([]); // Estudiantes matriculados
     const [error, setError] = useState(null);
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [newCourse, setNewCourse] = useState({ nombre_del_curso: '', descripcion: '', horario: '', profesor: '' });
@@ -31,7 +32,7 @@ const CourseList = () => {
         fetchCoursesAndTeachers();
     }, []);
 
-    const handleCourseSelect = (course) => {
+    const handleCourseSelect = async (course) => {
         setSelectedCourse(course);
         setIsEditing(true);
         setNewCourse({
@@ -41,8 +42,20 @@ const CourseList = () => {
             profesor: course.profesor || ''
         });
         setShowAddForm(false); 
+    
+        // Cargar estudiantes matriculados para el curso seleccionado
+        try {
+            const response = await axios.get(`http://127.0.0.1:8000/courses/${course.id}/students/`); 
+            const studentIds = response.data.estudiantes; // Asegúrate de que esto accede a los IDs correctos
+            const studentDetailsPromises = studentIds.map(id => axios.get(`http://127.0.0.1:8000/students/${id}`));
+            const studentDetailsResponses = await Promise.all(studentDetailsPromises);
+            const enrolledStudents = studentDetailsResponses.map(res => res.data); // Asumiendo que aquí obtienes los detalles del estudiante
+            setEnrolledStudents(enrolledStudents);
+        } catch (err) {
+            setError('Error fetching enrolled students: ' + (err.response ? err.response.data : err.message));
+        }
     };
-
+    
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setNewCourse({ ...newCourse, [name]: value });
@@ -194,10 +207,6 @@ const CourseList = () => {
                         </form>
                     )}
 
-                    <div className="mt-3">
-                        <h4>Estudiante Seleccionado: {selectedStudent}</h4>
-                    </div>
-
                     {isEditing && (
                         <form onSubmit={handleUpdateCourse}>
                             <div className="form-group">
@@ -248,10 +257,30 @@ const CourseList = () => {
                                     ))}
                                 </select>
                             </div>
-                            <button type="submit" className="btn btn-primary mt-2">
+                            <button type="submit" className="btn btn-warning mt-2">
                                 Actualizar Curso
                             </button>
                         </form>
+                    )}
+
+                    {selectedCourse && (
+                        <div>
+                            <h3>Estudiantes Matriculados</h3>
+                            <ul className="list-group">
+                                {Array.isArray(enrolledStudents) && enrolledStudents.length > 0 ? (
+                                    enrolledStudents.map((student) => (
+                                        <li key={student.id} className="list-group-item">
+                                            {student.nombre_completo}
+                                        </li>
+                                    ))
+                                ) : (
+                                    <li className="list-group-item">No hay estudiantes matriculados.</li>
+                                )}
+                            </ul>
+                            <button className="btn btn-danger mt-3" onClick={() => handleDeleteCourse(selectedCourse.id)}>
+                                Eliminar Curso
+                            </button>
+                        </div>
                     )}
                 </div>
             </div>
