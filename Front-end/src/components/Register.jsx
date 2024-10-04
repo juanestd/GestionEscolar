@@ -2,7 +2,7 @@
 const Register = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Aquí iría la lógica para el registro
+    
   };
 
   return (

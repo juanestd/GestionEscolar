@@ -17,13 +17,13 @@ class CourseDetailView(generics.RetrieveUpdateDestroyAPIView):
 @api_view(['POST'])
 def add_student_to_course(request, course_id):
     try:
-        course = Course.objects.get(id=course_id)  # Obtenemos el curso por ID
-        student_id = request.data.get('student_id')  # Obtenemos el ID del estudiante del body de la solicitud
-        student = Student.objects.get(id=student_id)  # Obtenemos el estudiante por ID
+        course = Course.objects.get(id=course_id)  
+        student_id = request.data.get('student_id')  
+        student = Student.objects.get(id=student_id)  
     except (Course.DoesNotExist, Student.DoesNotExist):
         return Response({'error': 'Curso o estudiante no encontrado.'}, status=status.HTTP_404_NOT_FOUND)
 
-    course.estudiantes.add(student)  # Añadimos el estudiante al curso
+    course.estudiantes.add(student)  
     course.save()
 
     return Response({'message': 'Estudiante agregado al curso exitosamente.'}, status=status.HTTP_200_OK)

@@ -1,10 +1,10 @@
-// src/components/Login.jsx
+
 import  { useState, useContext } from 'react';
-import { AuthContext } from '../context/auth/AuthContext'; // Importar AuthContext
+import { AuthContext } from '../context/auth/AuthContext'; 
 import axios from 'axios';
 
 const Login = () => {
-    const { login } = useContext(AuthContext); // Acceder a la función de login
+    const { login } = useContext(AuthContext); 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
@@ -13,9 +13,9 @@ const Login = () => {
         e.preventDefault();
         try {
             const response = await axios.post('http://127.0.0.1:8000/api/login', { email, password });
-            login(response.data.user); // Usar el método login del AuthContext
-            localStorage.setItem('token', response.data.token); // Guardar el token
-            // Redirigir o hacer algo más después de un inicio de sesión exitoso
+            login(response.data.user); 
+            localStorage.setItem('token', response.data.token); /
+           
         } catch (err) {
             setError('Error de inicio de sesión: ' + err.response.data.message);
         }

@@ -1,7 +1,6 @@
-// src/App.jsx
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from '../src/context/auth/AuthContext'; // Importar el AuthProvider
+import { AuthProvider } from '../src/context/auth/AuthContext'; 
 import NavBar from './components/NavBar';
 import Login from './components/Login';
 import CourseList from './components/CourseList';

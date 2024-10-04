@@ -1,4 +1,3 @@
-// src/router/AppRoutes.jsx
 
 import { Routes, Route } from 'react-router-dom';
 import Login from '../components/Login';
@@ -12,7 +11,7 @@ const AppRoutes = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <PrivateRoute path="/cursos" element={<CourseList />} />
-            {/* Otras rutas protegidas o públicas pueden ir aquí */}
+            {}
         </Routes>
     );
 };

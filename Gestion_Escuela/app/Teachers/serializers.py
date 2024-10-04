@@ -5,4 +5,4 @@ from .models import Teacher
 class TeacherSerializer(serializers.ModelSerializer):
     class Meta:
         model = Teacher
-        fields = '__all__'  # O especifica los campos que quieras incluir
+        fields = '__all__'  
