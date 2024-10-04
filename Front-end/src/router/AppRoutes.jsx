@@ -5,6 +5,7 @@ import Register from '../components/Register';
 import CourseList from '../components/CourseList';
 import Students from '../components/Students';
 import Teachers from '../components/Teachers';
+import Calificaciones from '../components/Calificaciones';
 
 import PrivateRoute from './PrivateRoute';
 
@@ -16,6 +17,7 @@ const AppRoutes = () => {
             <PrivateRoute path="/cursos" element={<CourseList />} />
             <Route path="/agregar-estudiante" element={<Students/>} /> 
             <Route path="/agregar-profesor" element={<Teachers/>} /> 
+            <Route path="/calificaciones" element={<Calificaciones/>} /> 
         </Routes>
     );
 };

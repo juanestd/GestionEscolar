@@ -49,14 +49,14 @@ const CourseList = () => {
             descripcion: course.descripcion || '',
             horario: course.horario || '',
             profesor: course.profesor || '', 
-            estudiantes: [] // Este valor se actualizará más adelante
+            estudiantes: [] 
         });
         setShowAddForm(false);
     
         // Cargar estudiantes matriculados para el curso seleccionado
         try {
             const response = await axios.get(`http://127.0.0.1:8000/courses/${course.id}/students/`);
-            const studentIds = response.data.estudiantes; // IDs de estudiantes matriculados
+            const studentIds = response.data.estudiantes; 
             const studentDetailsPromises = studentIds.map(id => axios.get(`http://127.0.0.1:8000/students/${id}`));
             const studentDetailsResponses = await Promise.all(studentDetailsPromises);
             const enrolledStudents = studentDetailsResponses.map(res => res.data);
@@ -64,7 +64,7 @@ const CourseList = () => {
             setEnrolledStudents(enrolledStudents);
             setNewCourse(prevCourse => ({
                 ...prevCourse,
-                estudiantes: studentIds // Establece los estudiantes matriculados en el nuevo curso
+                estudiantes: studentIds 
             }));
         } catch (err) {
             setError('Error fetching enrolled students: ' + (err.response ? err.response.data : err.message));

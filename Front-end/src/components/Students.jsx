@@ -35,7 +35,7 @@ const Students = () => {
 
             if (response.ok) {
                 console.log('Estudiante agregado con éxito');
-                // Resetear formulario
+                
                 setNombreCompleto('');
                 setCorreoElectronico('');
                 setNumeroTelefono('');

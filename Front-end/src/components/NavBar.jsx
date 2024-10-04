@@ -30,6 +30,9 @@ const NavBar = () => {
                         <li className={`nav-item ${location.pathname === '/agregar-profesor' ? 'active' : ''}`}>
                             <Link className="nav-link" to="/agregar-profesor">Agregar profesor</Link>
                         </li>
+                        <li className={`nav-item ${location.pathname === '/Calificaciones' ? 'active' : ''}`}>
+                            <Link className="nav-link" to="/Calificaciones">Calificaciones</Link>
+                        </li>
                         {user && (
                             <li className="nav-item">
                                 <Link className="nav-link" to="/" onClick={logout}>Logout</Link>
