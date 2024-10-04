@@ -4,6 +4,7 @@ import { AuthProvider } from '../src/context/auth/AuthContext';
 import NavBar from './components/NavBar';
 import Login from './components/Login';
 import CourseList from './components/CourseList';
+import Students   from './components/Students';
 
 const App = () => {
     return (
@@ -13,7 +14,8 @@ const App = () => {
                 <Routes>
                     <Route path="/login" element={<Login />} />
                     <Route path="/cursos" element={<CourseList />} />
-                    {/* Agrega otras rutas aquí */}
+                    <Route path="//agregar-estudiante" element={<Students />} />
+                    
                 </Routes>
             </Router>
         </AuthProvider>

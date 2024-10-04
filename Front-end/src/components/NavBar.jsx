@@ -25,7 +25,7 @@ const NavBar = () => {
                             <Link className="nav-link" to="/login">Login</Link>
                         </li>
                         <li className={`nav-item ${location.pathname === '/agregar-estudiante' ? 'active' : ''}`}>
-                        <Link className="nav-link" to="/agregar-estudiante">Agregar Estudiante</Link>
+                            <Link className="nav-link" to="/agregar-estudiante">Agregar Estudiante</Link>
                         </li>
                         {user && (
                             <li className="nav-item">

@@ -9,13 +9,14 @@ class StudentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Student
-        fields = ['id', 'nombre_completo', 'cursos', 'calificaciones_estudiante']  
+        fields = ['id', 'nombre_completo', 'correo_electronico', 'numero_telefono', 
+                  'fecha_nacimiento', 'direccion', 'rol', 'nombre_usuario', 
+                  'contraseña', 'cursos', 'calificaciones_estudiante']  
 
     def create(self, validated_data):
         cursos = validated_data.pop('cursos', [])  
         student = super().create(validated_data)  
 
-        
         for curso_id in cursos:
             student.cursos.add(curso_id)  
 
@@ -23,12 +24,9 @@ class StudentSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         cursos = validated_data.pop('cursos', None)  
-
-        
         instance = super().update(instance, validated_data)
 
         if cursos is not None:
-            
             instance.cursos.set(cursos)  
 
         return instance
