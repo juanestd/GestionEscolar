@@ -3,26 +3,25 @@ import axios from 'axios';
 
 const CourseList = () => {
     const [courses, setCourses] = useState([]);
-    const [teachers, setTeachers] = useState([]); // Estado para los docentes
-    const [students, setStudents] = useState([]); // Estado para los estudiantes
+    const [teachers, setTeachers] = useState([]); 
+    const [students, setStudents] = useState([]); 
     const [error, setError] = useState(null);
     const [selectedCourse, setSelectedCourse] = useState(null);
-    const [newCourse, setNewCourse] = useState({ name: '', description: '', schedule: '', teacher: '' });
+    const [newCourse, setNewCourse] = useState({ nombre_del_curso: '', descripcion: '', horario: '', profesor: '' });
     const [isEditing, setIsEditing] = useState(false);
     const [showAddForm, setShowAddForm] = useState(false); 
-    const [selectedStudent] = useState(''); 
+    const [selectedStudent, setSelectedStudent] = useState(''); 
 
-    
     useEffect(() => {
         const fetchCoursesAndTeachers = async () => {
             try {
-                const courseResponse = await axios.get('http://127.0.0.1:8000/course/course/v1/course/');
+                const courseResponse = await axios.get('http://127.0.0.1:8000/courses/'); // URL de cursos
                 setCourses(courseResponse.data);
 
-                const teacherResponse = await axios.get('http://127.0.0.1:8000/course/teacher/v1/'); 
+                const teacherResponse = await axios.get('http://127.0.0.1:8000/teachers/'); // URL de profesores
                 setTeachers(teacherResponse.data);
 
-                const studentResponse = await axios.get('http://127.0.0.1:8000/course/student/v1/'); 
+                const studentResponse = await axios.get('http://127.0.0.1:8000/students/'); // URL de estudiantes
                 setStudents(studentResponse.data);
             } catch (err) {
                 setError('Error fetching data: ' + (err.response ? err.response.data : err.message));
@@ -32,20 +31,18 @@ const CourseList = () => {
         fetchCoursesAndTeachers();
     }, []);
 
-    
     const handleCourseSelect = (course) => {
         setSelectedCourse(course);
         setIsEditing(true);
         setNewCourse({
-            name: course.name || '',
-            description: course.description || '',
-            schedule: course.schedule || '',
-            teacher: course.teacher || ''
+            nombre_del_curso: course.nombre_del_curso || '',
+            descripcion: course.descripcion || '',
+            horario: course.horario || '',
+            profesor: course.profesor || ''
         });
         setShowAddForm(false); 
     };
 
-    
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setNewCourse({ ...newCourse, [name]: value });
@@ -55,14 +52,14 @@ const CourseList = () => {
     const handleAddCourse = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://127.0.0.1:8000/course/course/v1/course/', {
-                name: newCourse.name,
-                description: newCourse.description,
-                schedule: newCourse.schedule,
-                teacher: newCourse.teacher
+            const response = await axios.post('http://127.0.0.1:8000/courses/', {
+                nombre_del_curso: newCourse.nombre_del_curso,
+                descripcion: newCourse.descripcion,
+                horario: newCourse.horario,
+                profesor: newCourse.profesor
             });
             setCourses([...courses, response.data]);
-            setNewCourse({ name: '', description: '', schedule: '', teacher: '' });
+            setNewCourse({ nombre_del_curso: '', descripcion: '', horario: '', profesor: '' });
             setShowAddForm(false); 
         } catch (err) {
             setError('Error adding course: ' + (err.response?.data ? JSON.stringify(err.response.data) : err.message));
@@ -73,11 +70,11 @@ const CourseList = () => {
     const handleUpdateCourse = async (e) => {
         e.preventDefault();
         try {
-            await axios.put(`http://127.0.0.1:8000/course/course/v1/course/${selectedCourse.id}/`, {
-                name: newCourse.name,
-                description: newCourse.description,
-                schedule: newCourse.schedule,
-                teacher: newCourse.teacher
+            await axios.put(`http://127.0.0.1:8000/courses/${selectedCourse.id}/`, {
+                nombre_del_curso: newCourse.nombre_del_curso,
+                descripcion: newCourse.descripcion,
+                horario: newCourse.horario,
+                profesor: newCourse.profesor
             });
             const updatedCourses = courses.map((course) =>
                 course.id === selectedCourse.id ? { ...course, ...newCourse } : course
@@ -85,7 +82,7 @@ const CourseList = () => {
             setCourses(updatedCourses);
             setSelectedCourse(null);
             setIsEditing(false);
-            setNewCourse({ name: '', description: '', schedule: '', teacher: '' });
+            setNewCourse({ nombre_del_curso: '', descripcion: '', horario: '', profesor: '' });
         } catch (err) {
             setError('Error updating course: ' + (err.response?.data ? JSON.stringify(err.response.data) : err.message));
         }
@@ -94,7 +91,7 @@ const CourseList = () => {
     // Delete a course
     const handleDeleteCourse = async (courseId) => {
         try {
-            await axios.delete(`http://127.0.0.1:8000/course/course/v1/course/${courseId}/`);
+            await axios.delete(`http://127.0.0.1:8000/courses/${courseId}/`);
             const updatedCourses = courses.filter((course) => course.id !== courseId);
             setCourses(updatedCourses);
         } catch (err) {
@@ -107,7 +104,6 @@ const CourseList = () => {
             {error && <p className="text-danger">{error}</p>}
 
             <div className="row">
-                {}
                 <div className="col-md-4">
                     <h2>Cursos Disponibles</h2>
                     <ul className="list-group">
@@ -121,40 +117,36 @@ const CourseList = () => {
                                     onClick={() => handleCourseSelect(course)}
                                     style={{ cursor: 'pointer' }}
                                 >
-                                    {course.name}
+                                    {course.nombre_del_curso}
                                 </li>
                             ))
                         )}
                     </ul>
                 </div>
 
-                {}
                 <div className="col-md-8">
                     <h2>Gestión de Cursos</h2>
-
-                    {}
                     <button
                         className="btn btn-success mb-3"
                         style={{ float: 'right' }}
                         onClick={() => {
                             setShowAddForm(!showAddForm);
                             setIsEditing(false); 
-                            setNewCourse({ name: '', description: '', schedule: '', teacher: '' }); 
+                            setNewCourse({ nombre_del_curso: '', descripcion: '', horario: '', profesor: '' }); 
                         }}
                     >
                         {showAddForm ? 'Ocultar Formulario' : 'Agregar Nuevo Curso'}
                     </button>
 
-                    {}
                     {showAddForm && (
                         <form onSubmit={handleAddCourse}>
                             <div className="form-group">
-                                <label>Nombre</label>
+                                <label>Nombre del Curso</label>
                                 <input
                                     type="text"
                                     className="form-control"
-                                    name="name"
-                                    value={newCourse.name}
+                                    name="nombre_del_curso"
+                                    value={newCourse.nombre_del_curso}
                                     onChange={handleInputChange}
                                     required
                                 />
@@ -164,8 +156,8 @@ const CourseList = () => {
                                 <input
                                     type="text"
                                     className="form-control"
-                                    name="description"
-                                    value={newCourse.description}
+                                    name="descripcion"
+                                    value={newCourse.descripcion}
                                     onChange={handleInputChange}
                                 />
                             </div>
@@ -174,8 +166,8 @@ const CourseList = () => {
                                 <input
                                     type="text"
                                     className="form-control"
-                                    name="schedule"
-                                    value={newCourse.schedule}
+                                    name="horario"
+                                    value={newCourse.horario}
                                     onChange={handleInputChange}
                                 />
                             </div>
@@ -183,15 +175,15 @@ const CourseList = () => {
                                 <label>Profesor</label>
                                 <select
                                     className="form-control"
-                                    name="teacher"
-                                    value={newCourse.teacher}
-                                    onChange={(e) => setNewCourse({ ...newCourse, teacher: e.target.value })}
+                                    name="profesor"
+                                    value={newCourse.profesor}
+                                    onChange={(e) => setNewCourse({ ...newCourse, profesor: e.target.value })}
                                     required
                                 >
                                     <option value="">Selecciona un profesor</option>
                                     {teachers.map((teacher) => (
-                                        <option key={teacher.id} value={teacher.name}>
-                                            {teacher.name}
+                                        <option key={teacher.id} value={teacher.id}>
+                                            {teacher.nombre_completo}
                                         </option>
                                     ))}
                                 </select>
@@ -202,21 +194,19 @@ const CourseList = () => {
                         </form>
                     )}
 
-                    {}
                     <div className="mt-3">
                         <h4>Estudiante Seleccionado: {selectedStudent}</h4>
                     </div>
 
-                    {}
                     {isEditing && (
                         <form onSubmit={handleUpdateCourse}>
                             <div className="form-group">
-                                <label>Nombre</label>
+                                <label>Nombre del Curso</label>
                                 <input
                                     type="text"
                                     className="form-control"
-                                    name="name"
-                                    value={newCourse.name}
+                                    name="nombre_del_curso"
+                                    value={newCourse.nombre_del_curso}
                                     onChange={handleInputChange}
                                     required
                                 />
@@ -226,8 +216,8 @@ const CourseList = () => {
                                 <input
                                     type="text"
                                     className="form-control"
-                                    name="description"
-                                    value={newCourse.description}
+                                    name="descripcion"
+                                    value={newCourse.descripcion}
                                     onChange={handleInputChange}
                                 />
                             </div>
@@ -236,8 +226,8 @@ const CourseList = () => {
                                 <input
                                     type="text"
                                     className="form-control"
-                                    name="schedule"
-                                    value={newCourse.schedule}
+                                    name="horario"
+                                    value={newCourse.horario}
                                     onChange={handleInputChange}
                                 />
                             </div>
@@ -245,28 +235,21 @@ const CourseList = () => {
                                 <label>Profesor</label>
                                 <select
                                     className="form-control"
-                                    name="teacher"
-                                    value={newCourse.teacher}
-                                    onChange={(e) => setNewCourse({ ...newCourse, teacher: e.target.value })}
+                                    name="profesor"
+                                    value={newCourse.profesor}
+                                    onChange={(e) => setNewCourse({ ...newCourse, profesor: e.target.value })}
                                     required
                                 >
                                     <option value="">Selecciona un profesor</option>
                                     {teachers.map((teacher) => (
-                                        <option key={teacher.id} value={teacher.name}>
-                                            {teacher.name}
+                                        <option key={teacher.id} value={teacher.id}>
+                                            {teacher.nombre_completo}
                                         </option>
                                     ))}
                                 </select>
                             </div>
                             <button type="submit" className="btn btn-primary mt-2">
                                 Actualizar Curso
-                            </button>
-                            <button
-                                type="button"
-                                className="btn btn-danger mt-2 ms-2"
-                                onClick={() => handleDeleteCourse(selectedCourse.id)}
-                            >
-                                Eliminar Curso
                             </button>
                         </form>
                     )}
