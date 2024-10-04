@@ -1,15 +1,19 @@
-from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 class Usuarios(models.Model):
-    full_name = models.CharField(max_length=255)
-    email = models.EmailField(unique=True)
-    phone_number = models.CharField(max_length=20)
-    birth_date = models.DateField()
-    address = models.TextField()
-    role = models.CharField(max_length=50)  # Ej: Estudiante, Profesor, Administrativo
-    username = models.CharField(max_length=150, unique=True)
-    password = models.CharField(max_length=128)
+    id = models.AutoField(primary_key=True)
+    nombre_completo = models.CharField(max_length=255)
+    correo_electronico = models.EmailField(unique=True)
+    numero_telefono = models.CharField(max_length=20)
+    fecha_nacimiento = models.DateField()
+    direccion = models.CharField(max_length=255)
+    rol = models.CharField(max_length=50, choices=[
+        ('Estudiante', 'Estudiante'),
+        ('Profesor', 'Profesor'),
+        ('Administrativo', 'Administrativo'),
+    ])
+    nombre_usuario = models.CharField(max_length=50, unique=True)
+    contraseña = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.full_name
+        return self.nombre_completo

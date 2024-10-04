@@ -1,0 +1,30 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Calificaciones</title>
+</head>
+<body>
+    <h1>Lista de Calificaciones</h1>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Estudiante</th>
+            <th>Curso</th>
+            <th>Calificación</th>
+            <th>Fecha de Evaluación</th>
+        </tr>
+        {% for grade in object_list %}
+        <tr>
+            <td>{{ grade.id }}</td>
+            <td>{{ grade.estudiante }}</td>
+            <td>{{ grade.curso }}</td>
+            <td>{{ grade.calificacion }}</td>
+            <td>{{ grade.fecha_evaluacion }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

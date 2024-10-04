@@ -1,13 +1,13 @@
 from django.db import models
 from app.Teachers.models import Teacher
-from app.Student.models import Student
 
 class Course(models.Model):
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
-    schedule = models.CharField(max_length=100)
-    info_students = models.ManyToManyField(Student, related_name='courses')  # Relación Muchos a muchos con estudiantes
+    id = models.AutoField(primary_key=True)
+    nombre_del_curso = models.CharField(max_length=255)
+    descripcion = models.TextField()
+    profesor = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name='cursos')  
+    horario = models.CharField(max_length=100)
+    
 
     def __str__(self):
-        return self.name + ' - By ' + str(self.teacher)
+        return self.nombre_del_curso

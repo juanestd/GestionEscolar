@@ -60,7 +60,7 @@ WSGI_APPLICATION = 'Gestion_Escuela.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Gestion',  # Reemplaza con el nombre de tu base de datos
+        'NAME': 'gestion3',  # Reemplaza con el nombre de tu base de datos
         'USER': 'postgres',  # Reemplaza con tu usuario de PostgreSQL
         'PASSWORD': '123456',  # Reemplaza con tu contraseña de PostgreSQL
         'HOST': 'localhost',  # Normalmente localhost

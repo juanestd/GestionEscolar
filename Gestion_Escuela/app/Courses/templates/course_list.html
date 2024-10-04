@@ -1,0 +1,31 @@
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Cursos</title>
+</head>
+<body>
+    <h1>Lista de Cursos</h1>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Nombre del Curso</th>
+            <th>Descripción</th>
+            <th>Profesor</th>
+            <th>Horario</th>
+        </tr>
+        {% for course in object_list %}
+        <tr>
+            <td>{{ course.id }}</td>
+            <td>{{ course.nombre_del_curso }}</td>
+            <td>{{ course.descripcion }}</td>
+            <td>{{ course.profesor }}</td>
+            <td>{{ course.horario }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

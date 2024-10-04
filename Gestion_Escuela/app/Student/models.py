@@ -1,23 +1,10 @@
 from django.db import models
-from app.Users.models import Usuarios  
+from app.Users.models import Usuarios
+from app.Courses.models import Course
 
-class Student(models.Model):
-    GRADE_CHOICES = [
-        ('1', 'Grado Primero'),
-        ('2', 'Grado Segundo'),
-        ('3', 'Grado Tercero'),
-        ('4', 'Grado Cuarto'),
-        ('5', 'Grado Quinto'),
-        ('6', 'Grado Sexto'),
-        ('7', 'Grado Séptimo'),
-        ('8', 'Grado Octavo'),
-        ('9', 'Grado Noveno'),
-        ('10', 'Grado Décimo'),
-        ('11', 'Grado Once'),
-    ]
-
-    user = models.OneToOneField(Usuarios, on_delete=models.CASCADE)
-    grade = models.CharField(max_length=2, choices=GRADE_CHOICES)
+class Student(Usuarios):  # Heredamos de Usuarios
+    cursos = models.ManyToManyField(Course, related_name='estudiantes')  
+    calificaciones_estudiante = models.ManyToManyField('Grades.Grade', related_name='estudiantes', blank=True)  # Relación con calificaciones
 
     def __str__(self):
-        return f"{self.user.full_name} - Grado {self.get_grade_display()}"
+        return self.nombre_completo

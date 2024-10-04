@@ -1,7 +1,12 @@
-from rest_framework import viewsets
+
+from rest_framework import generics
 from .models import Teacher
 from .serializers import TeacherSerializer
 
-class TeacherView(viewsets.ModelViewSet):
-    queryset = Teacher.objects.all()  # Asegúrate de que tu modelo esté bien definido
-    serializer_class = TeacherSerializer  # Asegúrate de que tu serializador esté correctamente definido
+class TeacherListCreateView(generics.ListCreateAPIView):
+    queryset = Teacher.objects.all()
+    serializer_class = TeacherSerializer
+
+class TeacherDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Teacher.objects.all()
+    serializer_class = TeacherSerializer

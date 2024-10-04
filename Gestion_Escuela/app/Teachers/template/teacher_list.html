@@ -1,0 +1,30 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Profesores</title>
+</head>
+<body>
+    <h1>Lista de Profesores</h1>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Nombre Completo</th>
+            <th>Correo Electrónico</th>
+            <th>Teléfono</th>
+            <th>Departamento</th>
+        </tr>
+        {% for teacher in object_list %}
+        <tr>
+            <td>{{ teacher.id }}</td>
+            <td>{{ teacher.nombre_completo }}</td>
+            <td>{{ teacher.correo_electronico }}</td>
+            <td>{{ teacher.telefono }}</td>
+            <td>{{ teacher.departamento }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

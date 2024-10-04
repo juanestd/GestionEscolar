@@ -1,10 +1,8 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from .views import CourseView
-
-router = DefaultRouter()
-router.register(r'courses', CourseView, basename='course')
+from django.urls import path
+from .views import CourseListCreateView, CourseDetailView, add_student_to_course
 
 urlpatterns = [
-    path('v1/', include(router.urls)),  # Incluye las rutas para la API de cursos
+    path('', CourseListCreateView.as_view(), name='course-list-create'),
+    path('<int:pk>/', CourseDetailView.as_view(), name='course-detail'),
+    path('<int:pk>/add-student/', add_student_to_course, name='add-student-to-course'),  
 ]
