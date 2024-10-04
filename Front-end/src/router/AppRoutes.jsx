@@ -4,6 +4,7 @@ import Login from '../components/Login';
 import Register from '../components/Register';
 import CourseList from '../components/CourseList';
 import Students from '../components/Students';
+import Teachers from '../components/Teachers';
 
 import PrivateRoute from './PrivateRoute';
 
@@ -14,7 +15,7 @@ const AppRoutes = () => {
             <Route path="/register" element={<Register />} />
             <PrivateRoute path="/cursos" element={<CourseList />} />
             <Route path="/agregar-estudiante" element={<Students/>} /> 
-            {}
+            <Route path="/agregar-profesor" element={<Teachers/>} /> 
         </Routes>
     );
 };

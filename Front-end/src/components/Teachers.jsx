@@ -1,59 +1,64 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 
-const Students = () => {
+const Teachers = () => {
     const [nombreCompleto, setNombreCompleto] = useState('');
     const [correoElectronico, setCorreoElectronico] = useState('');
     const [numeroTelefono, setNumeroTelefono] = useState('');
     const [fechaNacimiento, setFechaNacimiento] = useState('');
     const [direccion, setDireccion] = useState('');
-    const [rol, setRol] = useState('Estudiante'); 
+    const [departamento, setDepartamento] = useState('');
     const [nombreUsuario, setNombreUsuario] = useState('');
     const [contraseña, setContraseña] = useState('');
+    const [mensaje, setMensaje] = useState(''); 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const nuevoEstudiante = {
+        const nuevoProfesor = {
             nombre_completo: nombreCompleto,
             correo_electronico: correoElectronico,
             numero_telefono: numeroTelefono,
             fecha_nacimiento: fechaNacimiento,
             direccion: direccion,
-            rol: rol,
+            departamento: departamento,
             nombre_usuario: nombreUsuario,
             contraseña: contraseña,
+            rol: 'Profesor',  
         };
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/students/', {
+            const response = await fetch('http://127.0.0.1:8000/teachers/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(nuevoEstudiante),
+                body: JSON.stringify(nuevoProfesor),
             });
 
             if (response.ok) {
-                console.log('Estudiante agregado con éxito');
-                // Resetear formulario
+                setMensaje('Profesor agregado con éxito'); 
+                
                 setNombreCompleto('');
                 setCorreoElectronico('');
                 setNumeroTelefono('');
                 setFechaNacimiento('');
                 setDireccion('');
+                setDepartamento('');
                 setNombreUsuario('');
                 setContraseña('');
             } else {
-                console.error('Error al agregar estudiante');
+                const errorData = await response.json();
+                setMensaje(`Error al agregar profesor: ${errorData.detail || 'Por favor, intente de nuevo.'}`); 
             }
         } catch (error) {
             console.error('Error:', error);
+            setMensaje('Error al conectar con el servidor'); 
         }
     };
 
     return (
         <div className="container mt-5">
-            <h2>Agregar Estudiante</h2>
+            <h2>Agregar Profesor</h2>
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                     <label className="form-label">Nombre Completo</label>
@@ -106,16 +111,14 @@ const Students = () => {
                     />
                 </div>
                 <div className="mb-3">
-                    <label className="form-label">Rol</label>
-                    <select
+                    <label className="form-label">Departamento</label>
+                    <input
+                        type="text"
                         className="form-control"
-                        value={rol}
-                        onChange={(e) => setRol(e.target.value)}
-                    >
-                        <option value="Estudiante">Estudiante</option>
-                        <option value="Profesor">Profesor</option>
-                        <option value="Administrativo">Administrativo</option>
-                    </select>
+                        value={departamento}
+                        onChange={(e) => setDepartamento(e.target.value)}
+                        required
+                    />
                 </div>
                 <div className="mb-3">
                     <label className="form-label">Nombre de Usuario</label>
@@ -137,10 +140,17 @@ const Students = () => {
                         required
                     />
                 </div>
-                <button type="submit" className="btn btn-primary">Agregar Estudiante</button>
+                <button type="submit" className="btn btn-primary">Agregar Profesor</button>
             </form>
+
+            
+            {mensaje && (
+                <div className="mt-3 alert alert-info">
+                    {mensaje}
+                </div>
+            )}
         </div>
     );
 };
 
-export default Students;
+export default Teachers;
