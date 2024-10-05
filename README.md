@@ -16,8 +16,12 @@ Trabajo elaborado por:
  #Se activa al entorno virtual: ent\Scripts\activate.bat
  #Luego se instalan los requirements: pip install -r requirements.txt
  #Por último correr el servidor: python manage.py runserver
-
+ 
+#Para el Front
 #npm install
+#pip install vite
 #npm run dev
+
+
 
 
