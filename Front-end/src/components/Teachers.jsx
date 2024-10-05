@@ -141,7 +141,7 @@ const styles = {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        backgroundColor: '#f8f9fa', // Fondo suave
+        backgroundColor: '#f8f9fa', 
         padding: '20px',
         borderRadius: '8px',
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
