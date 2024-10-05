@@ -37,7 +37,7 @@ const Teachers = () => {
 
             if (response.ok) {
                 setMensaje('Profesor agregado con éxito'); 
-                
+                // Resetear campos del formulario
                 setNombreCompleto('');
                 setCorreoElectronico('');
                 setNumeroTelefono('');
@@ -57,100 +57,135 @@ const Teachers = () => {
     };
 
     return (
-        <div className="container mt-5">
-            <h2>Agregar Profesor</h2>
-            <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                    <label className="form-label">Nombre Completo</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        value={nombreCompleto}
-                        onChange={(e) => setNombreCompleto(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="mb-3">
-                    <label className="form-label">Correo Electrónico</label>
-                    <input
-                        type="email"
-                        className="form-control"
-                        value={correoElectronico}
-                        onChange={(e) => setCorreoElectronico(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="mb-3">
-                    <label className="form-label">Número de Teléfono</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        value={numeroTelefono}
-                        onChange={(e) => setNumeroTelefono(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="mb-3">
-                    <label className="form-label">Fecha de Nacimiento</label>
-                    <input
-                        type="date"
-                        className="form-control"
-                        value={fechaNacimiento}
-                        onChange={(e) => setFechaNacimiento(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="mb-3">
-                    <label className="form-label">Dirección</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        value={direccion}
-                        onChange={(e) => setDireccion(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="mb-3">
-                    <label className="form-label">Departamento</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        value={departamento}
-                        onChange={(e) => setDepartamento(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="mb-3">
-                    <label className="form-label">Nombre de Usuario</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        value={nombreUsuario}
-                        onChange={(e) => setNombreUsuario(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="mb-3">
-                    <label className="form-label">Contraseña</label>
-                    <input
-                        type="password"
-                        className="form-control"
-                        value={contraseña}
-                        onChange={(e) => setContraseña(e.target.value)}
-                        required
-                    />
-                </div>
-                <button type="submit" className="btn btn-primary">Agregar Profesor</button>
+        <div style={styles.container}>
+            <h2 style={styles.title}>Agregar Profesor</h2>
+            <form onSubmit={handleSubmit} style={styles.form}>
+                <InputField 
+                    label="Nombre Completo" 
+                    value={nombreCompleto} 
+                    onChange={setNombreCompleto} 
+                    required 
+                />
+                <InputField 
+                    label="Correo Electrónico" 
+                    type="email" 
+                    value={correoElectronico} 
+                    onChange={setCorreoElectronico} 
+                    required 
+                />
+                <InputField 
+                    label="Número de Teléfono" 
+                    value={numeroTelefono} 
+                    onChange={setNumeroTelefono} 
+                    required 
+                />
+                <InputField 
+                    label="Fecha de Nacimiento" 
+                    type="date" 
+                    value={fechaNacimiento} 
+                    onChange={setFechaNacimiento} 
+                    required 
+                />
+                <InputField 
+                    label="Dirección" 
+                    value={direccion} 
+                    onChange={setDireccion} 
+                    required 
+                />
+                <InputField 
+                    label="Departamento" 
+                    value={departamento} 
+                    onChange={setDepartamento} 
+                    required 
+                />
+                <InputField 
+                    label="Nombre de Usuario" 
+                    value={nombreUsuario} 
+                    onChange={setNombreUsuario} 
+                    required 
+                />
+                <InputField 
+                    label="Contraseña" 
+                    type="password" 
+                    value={contraseña} 
+                    onChange={setContraseña} 
+                    required 
+                />
+                <button type="submit" style={styles.button}>Agregar Profesor</button>
             </form>
 
-            
             {mensaje && (
-                <div className="mt-3 alert alert-info">
+                <div style={styles.alert}>
                     {mensaje}
                 </div>
             )}
         </div>
     );
+};
+
+const InputField = ({ label, type = 'text', value, onChange, required }) => (
+    <div style={styles.inputContainer}>
+        <label style={styles.label}>{label}</label>
+        <input
+            type={type}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            required={required}
+            style={styles.input}
+        />
+    </div>
+);
+
+const styles = {
+    container: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        backgroundColor: '#f8f9fa', // Fondo suave
+        padding: '20px',
+        borderRadius: '8px',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+        margin: '50px auto',
+        width: '400px',
+    },
+    title: {
+        marginBottom: '20px',
+    },
+    form: {
+        width: '100%',
+    },
+    inputContainer: {
+        marginBottom: '15px',
+    },
+    label: {
+        display: 'block',
+        marginBottom: '5px',
+    },
+    input: {
+        width: '100%',
+        padding: '10px',
+        border: '1px solid #ced4da',
+        borderRadius: '4px',
+        boxSizing: 'border-box',
+    },
+    button: {
+        width: '100%',
+        padding: '10px',
+        backgroundColor: '#007bff',
+        color: 'white',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        fontSize: '16px',
+    },
+    alert: {
+        marginTop: '20px',
+        padding: '10px',
+        backgroundColor: '#d1ecf1',
+        color: '#0c5460',
+        borderRadius: '4px',
+        border: '1px solid #bee5eb',
+    },
 };
 
 export default Teachers;

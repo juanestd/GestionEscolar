@@ -1,4 +1,4 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 
 const Students = () => {
     const [nombreCompleto, setNombreCompleto] = useState('');
@@ -35,7 +35,7 @@ const Students = () => {
 
             if (response.ok) {
                 console.log('Estudiante agregado con éxito');
-                
+                // Resetear los campos del formulario
                 setNombreCompleto('');
                 setCorreoElectronico('');
                 setNumeroTelefono('');
@@ -52,63 +52,45 @@ const Students = () => {
     };
 
     return (
-        <div className="container mt-5">
-            <h2>Agregar Estudiante</h2>
-            <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                    <label className="form-label">Nombre Completo</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        value={nombreCompleto}
-                        onChange={(e) => setNombreCompleto(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="mb-3">
-                    <label className="form-label">Correo Electrónico</label>
-                    <input
-                        type="email"
-                        className="form-control"
-                        value={correoElectronico}
-                        onChange={(e) => setCorreoElectronico(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="mb-3">
-                    <label className="form-label">Número de Teléfono</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        value={numeroTelefono}
-                        onChange={(e) => setNumeroTelefono(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="mb-3">
-                    <label className="form-label">Fecha de Nacimiento</label>
-                    <input
-                        type="date"
-                        className="form-control"
-                        value={fechaNacimiento}
-                        onChange={(e) => setFechaNacimiento(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="mb-3">
-                    <label className="form-label">Dirección</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        value={direccion}
-                        onChange={(e) => setDireccion(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="mb-3">
-                    <label className="form-label">Rol</label>
+        <div style={styles.container}>
+            <h2 style={styles.title}>Agregar Estudiante</h2>
+            <form onSubmit={handleSubmit} style={styles.form}>
+                <InputField 
+                    label="Nombre Completo" 
+                    value={nombreCompleto} 
+                    onChange={setNombreCompleto} 
+                    required 
+                />
+                <InputField 
+                    label="Correo Electrónico" 
+                    type="email" 
+                    value={correoElectronico} 
+                    onChange={setCorreoElectronico} 
+                    required 
+                />
+                <InputField 
+                    label="Número de Teléfono" 
+                    value={numeroTelefono} 
+                    onChange={setNumeroTelefono} 
+                    required 
+                />
+                <InputField 
+                    label="Fecha de Nacimiento" 
+                    type="date" 
+                    value={fechaNacimiento} 
+                    onChange={setFechaNacimiento} 
+                    required 
+                />
+                <InputField 
+                    label="Dirección" 
+                    value={direccion} 
+                    onChange={setDireccion} 
+                    required 
+                />
+                <div style={styles.selectContainer}>
+                    <label style={styles.label}>Rol</label>
                     <select
-                        className="form-control"
+                        style={styles.select}
                         value={rol}
                         onChange={(e) => setRol(e.target.value)}
                     >
@@ -117,30 +99,90 @@ const Students = () => {
                         <option value="Administrativo">Administrativo</option>
                     </select>
                 </div>
-                <div className="mb-3">
-                    <label className="form-label">Nombre de Usuario</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        value={nombreUsuario}
-                        onChange={(e) => setNombreUsuario(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="mb-3">
-                    <label className="form-label">Contraseña</label>
-                    <input
-                        type="password"
-                        className="form-control"
-                        value={contraseña}
-                        onChange={(e) => setContraseña(e.target.value)}
-                        required
-                    />
-                </div>
-                <button type="submit" className="btn btn-primary">Agregar Estudiante</button>
+                <InputField 
+                    label="Nombre de Usuario" 
+                    value={nombreUsuario} 
+                    onChange={setNombreUsuario} 
+                    required 
+                />
+                <InputField 
+                    label="Contraseña" 
+                    type="password" 
+                    value={contraseña} 
+                    onChange={setContraseña} 
+                    required 
+                />
+                <button type="submit" style={styles.button}>Agregar Estudiante</button>
             </form>
         </div>
     );
+};
+
+const InputField = ({ label, type = 'text', value, onChange, required }) => (
+    <div style={styles.inputContainer}>
+        <label style={styles.label}>{label}</label>
+        <input
+            type={type}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            required={required}
+            style={styles.input}
+        />
+    </div>
+);
+
+const styles = {
+    container: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        backgroundColor: '#f8f9fa', // Fondo suave
+        padding: '20px',
+        borderRadius: '8px',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+        margin: '50px auto',
+        width: '400px',
+    },
+    title: {
+        marginBottom: '20px',
+    },
+    form: {
+        width: '100%',
+    },
+    inputContainer: {
+        marginBottom: '15px',
+    },
+    label: {
+        display: 'block',
+        marginBottom: '5px',
+    },
+    input: {
+        width: '100%',
+        padding: '10px',
+        border: '1px solid #ced4da',
+        borderRadius: '4px',
+        boxSizing: 'border-box',
+    },
+    selectContainer: {
+        marginBottom: '15px',
+    },
+    select: {
+        width: '100%',
+        padding: '10px',
+        border: '1px solid #ced4da',
+        borderRadius: '4px',
+        boxSizing: 'border-box',
+    },
+    button: {
+        width: '100%',
+        padding: '10px',
+        backgroundColor: '#007bff',
+        color: 'white',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        fontSize: '16px',
+    },
 };
 
 export default Students;

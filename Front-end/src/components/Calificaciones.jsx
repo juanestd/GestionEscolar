@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 const Calificaciones = () => {
     const [calificaciones, setCalificaciones] = useState([]);
     const [estudiantes, setEstudiantes] = useState([]);
-    const [cursosMatriculados, setCursosMatriculados] = useState([]); 
+    const [cursosMatriculados, setCursosMatriculados] = useState([]);
     const [estudiante, setEstudiante] = useState('');
     const [curso, setCurso] = useState('');
     const [calificacion, setCalificacion] = useState('');
@@ -34,22 +34,20 @@ const Calificaciones = () => {
             return;
         }
         const data = await response.json();
-        console.log(data); 
         setCursosMatriculados(data);
     };
-    
+
     const handleEstudianteChange = (e) => {
         const selectedEstudiante = e.target.value;
         setEstudiante(selectedEstudiante);
         if (selectedEstudiante) {
-            fetchCursosMatriculados(selectedEstudiante); 
+            fetchCursosMatriculados(selectedEstudiante);
         } else {
-            setCursosMatriculados([]); 
+            setCursosMatriculados([]);
         }
-        setCurso(''); 
+        setCurso('');
     };
-    
-    
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         const nuevoRegistro = {
@@ -61,8 +59,8 @@ const Calificaciones = () => {
 
         try {
             const method = editId ? 'PUT' : 'POST';
-            const url = editId 
-                ? `http://127.0.0.1:8000/grades/${editId}/` 
+            const url = editId
+                ? `http://127.0.0.1:8000/grades/${editId}/`
                 : 'http://127.0.0.1:8000/grades/';
 
             const response = await fetch(url, {
@@ -113,13 +111,13 @@ const Calificaciones = () => {
         setCalificacion('');
         setFechaEvaluacion('');
         setEditId(null);
-        setCursosMatriculados([]); 
+        setCursosMatriculados([]);
     };
 
     return (
         <div className="container mt-5">
-            <h2>Calificaciones</h2>
-            <form onSubmit={handleSubmit}>
+            <h2 className="text-center mb-4">Gestión de Calificaciones</h2>
+            <form onSubmit={handleSubmit} className="shadow p-4 rounded bg-light">
                 <div className="mb-3">
                     <label className="form-label">Estudiante</label>
                     <select
@@ -141,7 +139,7 @@ const Calificaciones = () => {
                         value={curso}
                         onChange={(e) => setCurso(e.target.value)}
                         required
-                        disabled={!estudiante} 
+                        disabled={!estudiante}
                     >
                         <option value="">Selecciona un curso</option>
                         {cursosMatriculados.map((cur) => (
@@ -173,9 +171,9 @@ const Calificaciones = () => {
                 <button type="button" className="btn btn-secondary ms-2" onClick={resetForm}>Cancelar</button>
             </form>
 
-            <h3 className="mt-4">Lista de Calificaciones</h3>
-            <table className="table">
-                <thead>
+            <h3 className="mt-4 text-center">Lista de Calificaciones</h3>
+            <table className="table table-striped table-hover mt-3">
+                <thead className="table-light">
                     <tr>
                         <th>ID</th>
                         <th>Estudiante</th>

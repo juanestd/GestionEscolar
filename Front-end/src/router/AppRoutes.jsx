@@ -12,8 +12,8 @@ import PrivateRoute from './PrivateRoute';
 const AppRoutes = () => {
     return (
         <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login/>} />
+            <Route path="/register" element={<Register/>} />
             <PrivateRoute path="/cursos" element={<CourseList />} />
             <Route path="/agregar-estudiante" element={<Students/>} /> 
             <Route path="/agregar-profesor" element={<Teachers/>} /> 
