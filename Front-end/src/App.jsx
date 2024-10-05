@@ -7,6 +7,7 @@ import CourseList from './components/CourseList';
 import Students   from './components/Students';
 import Teachers from './components/Teachers';
 import Calificaciones from './components/Calificaciones';
+import Register from './components/Register';
 
 const App = () => {
     return (
@@ -15,6 +16,7 @@ const App = () => {
                 <NavBar />
                 <Routes>
                     <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
                     <Route path="/cursos" element={<CourseList />} />
                     <Route path="/agregar-estudiante" element={<Students />} />
                     <Route path="/agregar-profesor" element={<Teachers />} />
