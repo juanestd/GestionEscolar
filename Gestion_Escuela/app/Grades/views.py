@@ -1,5 +1,3 @@
-
-
 from rest_framework import generics
 from .models import Grade
 from .serializers import GradeSerializer

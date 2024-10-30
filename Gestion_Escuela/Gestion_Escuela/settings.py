@@ -57,7 +57,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Gestion_Escuela.wsgi.application'
 
-DATABASES = {
+'''DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'gestion4',  # Reemplaza con el nombre de tu base de datos
@@ -66,7 +66,15 @@ DATABASES = {
         'HOST': 'localhost',  # Normalmente localhost
         'PORT': '5432',  # El puerto predeterminado de PostgreSQL
     }
+}'''
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": "mydatabase",
+    }
 }
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
