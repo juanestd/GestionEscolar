@@ -8,7 +8,7 @@ from datetime import date
 class StudentModelTest(TestCase):
 
     def setUp(self):
-        # Crear un profesor
+        
         self.profesor = Teacher.objects.create(
             nombre_completo="Profesor Ejemplo",
             correo_electronico="profesor@ejemplo.com",
@@ -21,7 +21,6 @@ class StudentModelTest(TestCase):
             departamento="Matemáticas"
         )
 
-        # Crear un curso
         self.curso = Course.objects.create(
             nombre_del_curso="Matemáticas Avanzadas",
             descripcion="Curso de matemáticas avanzado",
@@ -29,7 +28,7 @@ class StudentModelTest(TestCase):
             horario="Lunes y Miércoles 10:00-12:00"
         )
 
-        # Crear un estudiante
+
         self.estudiante = Student.objects.create(
             nombre_completo="Estudiante Ejemplo",
             correo_electronico="estudiante@ejemplo.com",
@@ -41,9 +40,8 @@ class StudentModelTest(TestCase):
             contraseña="password123"
         )
 
-        # Establecer relación muchos a muchos
-        self.estudiante.cursos.add(self.curso)  # Añadir el curso al estudiante
-        self.curso.estudiantes.add(self.estudiante)  # Añadir el estudiante al curso
+        self.estudiante.cursos.add(self.curso) 
+        self.curso.estudiantes.add(self.estudiante)
 
     def test_student_creation(self):
         """Prueba que el estudiante se crea con los atributos heredados de Usuarios"""
@@ -53,7 +51,7 @@ class StudentModelTest(TestCase):
 
     def test_student_courses_relation(self):
         """Prueba que el estudiante puede relacionarse con cursos correctamente"""
-        # Verificar que el curso está en los cursos del estudiante
+     
         self.assertIn(self.curso, self.estudiante.cursos.all())
-        # Verificar que el estudiante está en los estudiantes del curso
+    
         self.assertIn(self.estudiante, self.curso.estudiantes.all())
